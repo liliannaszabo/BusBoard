@@ -3,7 +3,8 @@ require 'net/http'
 require 'uri'
 
 def display_bus(bus)
-  puts "line number: #{bus["lineName"]} || destination: #{bus["destinationName"]} || time until arrival: #{(bus["timeToStation"]/60).to_s} minutes"
+  time_until_arrival = bus["timeToStation"]/60 == 0 ? "due" : "#{(bus["timeToStation"]/60).to_s} minutes"
+  puts "line number: #{bus["lineName"]} || destination: #{bus["destinationName"]} || time until arrival: #{time_until_arrival}"
 end
 
 def display_buses_by_station_code(bus_code)
@@ -38,9 +39,11 @@ def display_buses_by_postcode
   stop_point_ids_by_postcode_url = "https://api.tfl.gov.uk/StopPoint/?lat=#{post_code_information["latitude"]}&lon=#{post_code_information["longitude"]}&stopTypes=NaptanPublicBusCoachTram"
   stop_points_information = call_api(stop_point_ids_by_postcode_url)["stopPoints"]
   for stop_point in stop_points_information
-    puts "Arrivals for #{stop_point["commonName"]}:"
-    display_buses_by_station_code(stop_point["naptanId"])
-    puts
+    if !stop_point["lines"].empty?
+      puts "Arrivals for #{stop_point["commonName"]}#{stop_point["stopLetter"] ? " - Stop #{stop_point["stopLetter"]}" : "" }:"
+      display_buses_by_station_code(stop_point["naptanId"])
+      puts
+    end
   end
 
 
