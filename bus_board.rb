@@ -31,10 +31,14 @@ end
 
 def display_buses_by_postcode
   puts "Enter postcode:"
-  # post_code = gets.chomp.gsub(" ", "%20")
-  post_code = "W3 6bw".gsub(" ", "%20")
+  post_code = gets.chomp.gsub(" ", "%20")
   postcode_url = "https://api.postcodes.io/postcodes/" + post_code
   post_code_information = call_api(postcode_url)["result"]
+  if(!post_code_information)
+    puts "incorrect postcode"
+    return
+  end
+  puts "hello"
 
   stop_point_ids_by_postcode_url = "https://api.tfl.gov.uk/StopPoint/?lat=#{post_code_information["latitude"]}&lon=#{post_code_information["longitude"]}&stopTypes=NaptanPublicBusCoachTram"
   stop_points_information = call_api(stop_point_ids_by_postcode_url)["stopPoints"]
