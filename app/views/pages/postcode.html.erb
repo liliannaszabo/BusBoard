@@ -1,0 +1,28 @@
+
+<ul>
+  <% @stops.each do |stop| %>
+    <li>
+      <h2><%= stop["name"] %> </h2>
+      <table style="border-collapse: collapse; width: 100%;">
+        <thead>
+        <tr>
+          <th style="width: 20%;">Bus Number</th>
+          <th style="width: 30%;">Destination</th>
+          <th style="width: 50%;">Arrival Time (minutes)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% stop["buses"].each do |bus| %>
+          <tr>
+            <td style="width: 20%;"><%= bus["lineId"] %></td>
+            <td style="width: 30%;"><%= bus["destinationName"] %></td>
+            <td style="width: 50%;">
+              <%= (bus["timeToStation"] / 60).zero? ? "due" : (bus["timeToStation"] / 60) %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </li>
+  <% end %>
+</ul>

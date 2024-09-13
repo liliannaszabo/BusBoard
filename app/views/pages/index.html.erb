@@ -1,0 +1,6 @@
+<h2>Please enter your postcode:</h2>
+<%= form_with url: '/postcode', method: :get do |form| %>
+  <%= form.label :postcode, "" %>
+  <%= form.text_field :postcode, required: true, placeholder: "Enter your postcode" %>
+  <%= form.submit 'Search' %>
+<% end %>
