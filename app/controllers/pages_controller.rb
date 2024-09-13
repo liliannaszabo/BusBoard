@@ -1,6 +1,11 @@
 require 'net/http'
 require 'json'
 
+POSTCODE_BASE_API = "https://api.postcodes.io/postcodes/"
+TFL_BASE_API = "https://api.tfl.gov.uk/StopPoint/"
+
+
+
 class PagesController < ApplicationController
   def index
   end
@@ -37,7 +42,7 @@ class PagesController < ApplicationController
   private
 
   def fetch_arrivals(stop_point)
-    url = "https://api.tfl.gov.uk/StopPoint/#{stop_point["naptanId"]}/Arrivals"
+    url = "#{TFL_BASE_API}#{stop_point["naptanId"]}/Arrivals"
     result = Net::HTTP.get(URI.parse(url))
     JSON.parse(result)
         .sort_by { |bus| bus["timeToStation"] }
@@ -45,13 +50,14 @@ class PagesController < ApplicationController
   end
 
   def get_stop_points_by_lat_lon(lat, lon)
-    stop_point_ids_by_postcode_url = "https://api.tfl.gov.uk/StopPoint/?lat=#{lat}&lon=#{lon}&stopTypes=NaptanPublicBusCoachTram"
+    stop_point_ids_by_postcode_url = "#{TFL_BASE_API}?lat=#{lat}&lon=#{lon}&stopTypes=NaptanPublicBusCoachTram"
     tfl_result = Net::HTTP.get(URI.parse(stop_point_ids_by_postcode_url))
     JSON.parse(tfl_result)["stopPoints"]
   end
 
+
   def get_coords_by_postcode
-    postcode_url = "https://api.postcodes.io/postcodes/" + params[:postcode].gsub(" ", "%20")
+    postcode_url = POSTCODE_BASE_API + params[:postcode].gsub(" ", "%20")
     result = Net::HTTP.get(URI.parse(postcode_url))
     postcode_information = JSON.parse(result)["result"]
     if postcode_information == nil
