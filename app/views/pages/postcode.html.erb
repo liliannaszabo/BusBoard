@@ -1,4 +1,4 @@
-
+<body>
 <ul>
   <% @stops.each do |stop| %>
     <li>
@@ -26,3 +26,15 @@
     </li>
   <% end %>
 </ul>
+
+<script>
+
+    const REFRESH_RATE_MS = 30000;
+
+    function refreshPage() {
+        window.location.reload();
+    }
+    setInterval(refreshPage, REFRESH_RATE_MS);
+</script>
+</body>
+
