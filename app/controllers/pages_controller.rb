@@ -12,12 +12,12 @@ class PagesController < ApplicationController
       redirect_to root_path
     else
       stop_points_information = get_stop_points_by_lat_lon(lat, lon)
-      @stops = []
-      @length = []
       if stop_points_information == nil
-        flash[:error] = "Something went wrong"
+        flash[:error] = "No bus stations nearby"
         redirect_to root_path
       else
+        @stops = []
+        @length = []
         stop_points_information.each { |stop_point|
           unless stop_point["lines"].empty?
             bus_departures = fetch_arrivals(stop_point)
