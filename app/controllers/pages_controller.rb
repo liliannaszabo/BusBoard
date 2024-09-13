@@ -7,26 +7,30 @@ class PagesController < ApplicationController
 
   def postcode
     lat,lon = get_coords_by_postcode
-    stop_points_information = get_stop_points_by_lat_lon(lat, lon)
-    @stops = []
-    @length = []
-
-    if stop_points_information == nil
-      @errors = "No stops to show"
+    if lat == nil && lon == nil
+      flash[:error] = "Invalid postcode. Please try again."
+      redirect_to root_path
     else
-      stop_points_information.each { |stop_point|
-        unless stop_point["lines"].empty?
-          bus_departures = fetch_arrivals(stop_point)
-          stop_name = stop_point["commonName"]
-          stop_letter = stop_point["stopLetter"]
-          name = "#{stop_name}#{stop_letter ? " - Stop #{stop_letter}" : "" }:"
-          @stops << {
-            "name" => name,
-            "buses" => bus_departures
-          }
-        end
-
-      }
+      stop_points_information = get_stop_points_by_lat_lon(lat, lon)
+      @stops = []
+      @length = []
+      if stop_points_information == nil
+        flash[:error] = "Something went wrong"
+        redirect_to root_path
+      else
+        stop_points_information.each { |stop_point|
+          unless stop_point["lines"].empty?
+            bus_departures = fetch_arrivals(stop_point)
+            stop_name = stop_point["commonName"]
+            stop_letter = stop_point["stopLetter"]
+            name = "#{stop_name}#{stop_letter ? " - Stop #{stop_letter}" : "" }:"
+            @stops << {
+              "name" => name,
+              "buses" => bus_departures
+            }
+          end
+        }
+      end
     end
   end
 
@@ -50,6 +54,9 @@ class PagesController < ApplicationController
     postcode_url = "https://api.postcodes.io/postcodes/" + params[:postcode].gsub(" ", "%20")
     result = Net::HTTP.get(URI.parse(postcode_url))
     postcode_information = JSON.parse(result)["result"]
+    if postcode_information == nil
+      return [nil,nil]
+    end
     [postcode_information["latitude"], postcode_information["longitude"]]
   end
 

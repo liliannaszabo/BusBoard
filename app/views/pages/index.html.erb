@@ -4,3 +4,9 @@
   <%= form.text_field :postcode, required: true, placeholder: "Enter your postcode" %>
   <%= form.submit 'Search' %>
 <% end %>
+
+<% if flash[:error] %>
+  <div class="error-message">
+    <p><%= flash[:error] %></p>
+  </div>
+<% end %>
